@@ -1,0 +1,252 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <div class="profile-header">
+        <div class="profile-div" style="width: 100%">
+            <div class="profile-info-div">
+                <button id="back-button"><img style="width: 25px; height: 25px;" src="{% get_media_prefix %}images/back.png"></button>
+                <div>
+                    <h5 id="profile-name" class="no-margin bold">{{ profile.name }}</h5>
+                    <p class="lighttext small-text no-margin">{{ posts|length}} Hisses</p>
+                </div>
+            </div>
+            <div class="large-pfp-div">
+                {% if profile.pfp != None and profile.pfp != "" %}
+                    <img class="large-pfp icn" src="{% get_media_prefix %}{{ profile.pfp }}">
+                {% else %}
+                    <img class="large-pfp icn" src="{% get_media_prefix %}images/default_pfp.png">
+                {% endif %}
+                {% if user.is_authenticated and user != profile %}
+                    <form class="profile-form" action="{% url 'users' profile.username %}" method="POST">
+                        {% csrf_token %}
+                        <div id="follow">
+                            {% if follows %}
+                                <button id="followed-button">Following</button>
+                                <button style="display: none" id="follow-button">Follow</button>
+                            {% else %}
+                                <button id="follow-button">Follow</button>
+                                <button style="display: none" id="followed-button">Following</button>
+                            {% endif %}
+                        </div>
+                    </form>
+                {% elif user != profile %}
+                    <form class="profile-form" action="{% url 'users' profile.username %}" method="POST">
+                        {% csrf_token %}
+                        <div>
+                            <button href="{% url 'login' %}" id="guest-follow-button">Follow</button>
+                        </div>
+                    </form>
+                {% else %}
+                    <div class="profile-form">
+                        {% csrf_token %}
+                        <div id="profile">
+                            <a class="pf-button">
+                                <img class="settings" src='{% get_media_prefix %}images/setting.png'>
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="profile-and-follower-info-div">
+                <div class="follower-info-div">
+                    <div>
+                        <h5 id="profile-name" class="no-margin bold">{{ profile.name }}</h5>
+                    </div>
+                    {% if profile.bio != None and profile.bio != "" %}
+                        <p id="profile-bio" class="no-margin bio-text">{{ profile.bio }}</p>
+                    {% endif %}
+                    <div class="bio-follower-div">
+                        {% if profile.location != None and profile.location != "" %}
+                        <div class="small-icon-div">
+                            <img class="bio-icon" src="{% get_media_prefix %}images/location.png"></img>
+                            <p id="profile-location" class="no-margin small-text grey">{{ profile.location }}</p>
+                        </div>
+                        {% endif %}
+                        {% if profile.website != None and profile.website != ""%}
+                        <div class="small-icon-div">
+                            <img class="bio-icon" src="{% get_media_prefix %}images/link.png"></img>
+                            <p class="no-margin small-text"><a id="profile-website" class="lightblue" href="//{{ profile.website }}">{{ profile.website }}</a></p>
+                        </div>
+                        {% endif %}
+                        <div class="small-icon-div">
+                            <img class="bio-icon" src="{% get_media_prefix %}images/date_joined.png"></img>
+                            <p class="no-margin small-text grey">Joined {{ profile.date_joined|date:"F Y" }}</p>
+                        </div>
+                    </div>
+                    <div class="follower-subdiv">
+                        {% if profile_followers|length != 1 %}
+                            <p class="no-margin small-text grey"><b style="color: black">{{ profile_followers|length }}</b> Followers</p>
+                        {% else %}
+                            <p class="no-margin small-text grey"><b style="color: black">{{ profile_followers|length }}</b> Follower</p>
+                        {% endif %}
+                        <p class="no-margin small-text grey"><b style="color: black">{{ profile_following|length }}</b> Following</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {% for object in page.object_list %}
+    <div id="post" class="image-text" data-number="{{ object.id }}" data-user-email = "{{ user.email }}" data-user = "{{ user }}">
+        <div class="hiss-text">
+                <div class="text-head">
+                <div class="user-links">
+                    {% if object.poster.pfp != None and object.poster.pfp != "" %}
+                        <a id="user-link" href="{% url 'users' object.poster %}"><img class="pfp icn" style="border: 1px solid black; border-radius: 50%;" src="{% get_media_prefix %}{{ object.poster.pfp }}"></a>
+                    {% else %}
+                        <a id="user-link" href="{% url 'users' object.poster %}"><img class="pfp icn" style="border: 1px solid black; border-radius: 50%;" src="{% get_media_prefix %}images/default_pfp.png"></a>
+                    {% endif %}
+
+                    <a id="user-link" href="{% url 'users' object.poster %}"><p id="poster">{{ object.poster }}</p></a>
+                </div>
+                    {% if user == object.poster %}
+                        <div class="btn-group dropleft">
+                        <img id="dots" type="button" class="popover-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{% get_media_prefix %}images/dots.png">
+                            <div id="edit" class="dropdown-menu">
+                                <a class="dropdown-item">
+                                    <img class='dropdown-icon' src='{% get_media_prefix %}images/edit-icon.png'>
+                                    <p class='popover-a'> Edit Post </p>
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="btn-group dropleft">
+                            <img id="dots" type="button" class="popover-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{% get_media_prefix %}images/dots.png">
+                                <div id="follow" class="dropdown-menu" data-user="{{ user }}" data-profile="{{ object.poster.username }}">
+                                    {% if user.is_authenticated %}
+                                        <a id="unfollow-item" class="dropdown-item">
+                                            <img class='dropdown-icon' src='{% get_media_prefix %}images/unfollow-icon.png'>
+                                            <p class='popover-a'>Unfollow {{ object.poster }}</p>
+                                        </a>
+                                        <a id="follow-item"class="dropdown-item">
+                                            <img class='dropdown-icon' src='{% get_media_prefix %}images/follow-icon.png'>
+                                            <p class='popover-a'>Follow {{ object.poster }}</p>
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'login' %}" class="dropdown-item">
+                                            <img class='dropdown-icon' src='{% get_media_prefix %}images/follow-icon.png'>
+                                            <p class='popover-a'>Follow {{ object.poster }}</p>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="text-body">
+                    <p id="text" class="body">{{ object.body }}</p>
+                </div>
+                <div class="text-foot">
+                    <div class="likesdiv">
+                        {% if user.is_authenticated %}
+                            <a id="like-button"><img id="heart" src="{% get_media_prefix %}images/heart-empty.png"></a>
+                            <a id="liked-button"><img id="heart" src="{% get_media_prefix %}images/heart-full.png"></a>
+                        {% else %}
+                            <a id="like-button" href="{% url 'login' %}" style="display: block"><img id="heart" src="{% get_media_prefix %}images/heart-empty.png"></a>
+                        {% endif %}
+                        <p id="like-count">{{ object.likes_count }}</p>
+                    </div>
+                    <p id="post-date">{{ object.date_posted }}</p>
+                </div>
+            </div>
+    </div>
+    {% endfor %}
+    {% if page.paginator.num_pages > 1 %}
+    <div>
+        <nav id="page-nav" aria-label="Page navigation">
+            <ul class="pagination">
+                {% if page.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}">Previous</a></li>
+                {% else %}
+                    <li disabled class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                {% endif %}
+
+                {% if page.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}">Next</a></li>
+                {% else %}
+                    <li class="page-item disabled"><a class="page-link" href="">Next</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        <span class="page-item page-info"> Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+    </div>
+    {% endif %}
+
+    <div id="myModal" class="usermodal">
+        <div class="usermodal-content">
+            <div class="usermodal-header">
+            <span class="close">&times;</span>
+            <span class="close-arrow"><img style="width: 25px; height: 25px;" src="{% get_media_prefix %}images/grey-back.png"></span>
+            <h5 class="usermodal-title">Edit Profile</h5>
+            <div class="save-div">
+                <button type="submit" form="change-pfp-form" class="save" data-pic="{{ profile.pfp }}" data-user-name="{{ profile.username }}">Save</button>
+            </div>
+            </div>
+            <div class="usermodal-body">
+            <div style="display: flex; justify-content: center">
+                <div class="settings-change-pfp">
+                    <div class="pfp-wrapper">
+                        {% if profile.pfp != None and profile.pfp != "" %}
+                            <img class="old-pfp reicn" src="{% get_media_prefix %}{{ profile.pfp }}">
+                        {% else %}
+                            <img class="old-pfp reicn" src="{% get_media_prefix %}images/default_pfp.png">
+                        {% endif %}
+                    </div>
+                    <form method="POST" id="change-pfp-form" enctype="multipart/form-data" action="{% url 'edit_info' profile.username %}">
+                        <input id="file" name="profile-image" type="file">
+                    </form>
+                    <label for="file" id="uploadBtn"><img style="width: 50%; height: 50%;" src="{% get_media_prefix %}images/add_pfp.png"></label>
+                </div>
+            </div>
+            <div class="change-text-div">
+                {% csrf_token %}
+                <div class="change-text">
+                    <div>Name</div>
+                    <input id="name" class="profile-input" name="name" placeholder="{{ profile.name }}"></input>
+                </div>
+                <div class="change-text bio">
+                    <div>Bio</div>
+                    <input id="bio" class="profile-input" name="bio" placeholder="{{ profile.bio }}"></input>
+                </div>
+                <div class="change-text">
+                    <div>Location</div>
+                    <input id="location" class="profile-input" name="location" placeholder="{{ profile.location }}"></input>
+                </div>
+                <div class="change-text">
+                    <div>Website</div>
+                    <input id="website" class="profile-input" name="website" placeholder="{{ profile.website }}"></input>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="myEditModal" class="usermodal">
+        <div class="usermodal-content">
+            <div class="usermodal-header">
+            <span class="close">&times;</span>
+            <span class="close-arrow"><img style="width: 25px; height: 25px;" src="{% get_media_prefix %}images/grey-back.png"></span>
+            <div class="save-div">
+                <button type="submit" form="change-pfp-form" id="update-post" class="save" data-user-name="{{ profile.username }}">Update</button>
+            </div>
+            </div>
+            <div class="usermodal-body">
+            <div class="edit-text-div">
+                {% csrf_token %}
+                <div class="edit-text">
+                    <div class="edit-icon-wrapper">
+                        {% if user.pfp != None and user.pfp != "" %}
+                            <img class="edit-pfp-icon" style="border: 1px solid black; border-radius: 50%;" src="{% get_media_prefix %}{{ user.pfp }}">
+                        {% else %}
+                            <img class="edit-pfp-icon" style="border: 1px solid black; border-radius: 50%;" src="{% get_media_prefix %}images/default_pfp.png">
+                        {% endif %}
+                    </div>
+                    <div id="post-editor" autocomplete="off" autofocus="autofocus" class="edit-input" name="name" placeholder="{{ profile.name }}" contenteditable></div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+{% endblock %}

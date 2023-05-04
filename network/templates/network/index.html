@@ -1,0 +1,151 @@
+{% extends "network/layout.html" %}
+{% load static %}
+{% load tz %}
+
+{% block body %}
+    {% if alert %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ alert }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+    {% if user.is_authenticated %}
+        <div id="post-view">
+            <form id="post-form" action="{% url 'hiss' %}" method="POST">
+                {% csrf_token %}
+                <div id="post-flex">
+                    {% if user.pfp != None and user.pfp != "" %}
+                        <a href="{% url 'users' user %}"><img class="pfp" style="border: 1px solid black; border-radius: 50%;" src="{% get_media_prefix %}{{ user.pfp }}"></a>
+                    {% else %}
+                        <a href="{% url 'users' user %}"><img class="pfp" style="border: 1px solid black; border-radius: 50%;" src="{% get_media_prefix %}images/default_pfp.png"></a>
+                    {% endif %}
+                    <input minlength="1" id="post-body" class="form-control" autocomplete="off" autofocus="true" placeholder="What's going on?" name="body"></input>
+                </div>
+                <input id="submit" type="submit" value="Hiss" class="btn btn-primary"/>
+            </form>
+        </div>
+    {% else %}
+        <div id="post-view">
+            <form id="post-form" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div id="post-flex">
+                    <a href="{% url 'users' user %}"><img class="pfp" style="border: 1px solid black; border-radius: 50%;" src="{% get_media_prefix %}images/default_pfp.png"></a>
+                    <input minlength="1" id="post-body" class="form-control" autocomplete="off" autofocus="true" placeholder="Sign in to hiss!" name="body"></input>
+                </div>
+                <button id="submit" class="btn btn-primary">Sign In To Hiss!</button>
+            </form>
+        </div>
+    {% endif %}
+
+    {% for object in page.object_list %}
+    <div id="post" class="image-text" data-number="{{ object.id }}" data-user-email = "{{ user.email }}"data-user = "{{ user }}">
+            <div class="hiss-text">
+                <div class="text-head">
+                <div class="user-links">
+                    {% if object.poster.pfp != None and object.poster.pfp != "" %}
+                        <a id="user-link" href="{% url 'users' object.poster %}"><img class="pfp" style="border: 1px solid black; border-radius: 50%;" src="{% get_media_prefix %}{{ object.poster.pfp }}"></a>
+                    {% else %}
+                        <a id="user-link" href="{% url 'users' object.poster %}"><img class="pfp" style="border: 1px solid black; border-radius: 50%;" src="{% get_media_prefix %}images/default_pfp.png"></a>
+                    {% endif %}
+                    <a id="user-link" href="{% url 'users' object.poster %}"><p id="poster">{{ object.poster }}</p></a>
+                </div>
+                    {% if user == object.poster %}
+                        <div class="btn-group dropleft">
+                        <img id="dots" type="button" class="popover-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{% get_media_prefix %}images/dots.png">
+                            <div id="edit" class="dropdown-menu">
+                                <a class="dropdown-item">
+                                    <img class='dropdown-icon' src='{% get_media_prefix %}images/edit-icon.png'>
+                                    <p class='popover-a'>Edit Post</p>
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="btn-group dropleft">
+                            <img id="dots" type="button" class="popover-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{% get_media_prefix %}images/dots.png">
+                                <div id="follow" class="dropdown-menu" data-user="{{ user }}" data-profile="{{ object.poster.username }}">
+                                    {% if user.is_authenticated %}
+                                        <a id="unfollow-item" class="dropdown-item" style="display: none">
+                                            <img class='dropdown-icon' src='{% get_media_prefix %}images/unfollow-icon.png'>
+                                            <p class='popover-a'>Unfollow {{ object.poster }}</p>
+                                        </a>
+                                        <a id="follow-item"class="dropdown-item" style="display: none">
+                                            <img class='dropdown-icon' src='{% get_media_prefix %}images/follow-icon.png'>
+                                            <p class='popover-a'>Follow {{ object.poster }}</p>
+                                        </a>
+                                    {% else %}
+                                        <a href = "{% url 'login' %}" class="dropdown-item">
+                                            <img class='dropdown-icon' src='{% get_media_prefix %}images/follow-icon.png'>
+                                            <p class='popover-a'>Follow {{ object.poster }}</p>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="text-body">
+                    <p id="text" class="body">{{ object.body }}</p>
+                </div>
+                <div class="text-foot">
+                    <div class="likesdiv">
+                        {% if user.is_authenticated %}
+                            <a id="like-button"><img id="heart" src="{% get_media_prefix %}images/heart-empty.png"></a>
+                            <a id="liked-button"><img id="heart" src="{% get_media_prefix %}images/heart-full.png"></a>
+                        {% else %}
+                            <a id="like-button" href="{% url 'login' %}" style="display: block"><img id="heart" src="{% get_media_prefix %}images/heart-empty.png"></a>
+                        {% endif %}
+                        <p id="like-count">{{ object.likes_count }}</p>
+                    </div>
+                    <p id="post-date">{{ object.date_posted }}</p>
+                </div>
+            </div>
+    </div>
+    {% endfor %}
+        {% if page.paginator.num_pages > 1 %}
+            <div>
+                <nav id="page-nav" aria-label="Page navigation">
+                    <ul class="pagination">
+                        {% if page.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}">Previous</a></li>
+                        {% else %}
+                            <li disabled class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                        {% endif %}
+
+                        {% if page.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}">Next</a></li>
+                        {% else %}
+                            <li class="page-item disabled"><a class="page-link" href="">Next</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+
+                <span class="page-item page-info"> Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+            </div>
+        {% endif %}
+        <div id="myEditModal" class="usermodal">
+            <div class="usermodal-content">
+                <div class="usermodal-header">
+                <span class="close">&times;</span>
+                <span class="close-arrow"><img style="width: 25px; height: 25px;" src="{% get_media_prefix %}images/grey-back.png"></span>
+                <div class="save-div">
+                    <button type="submit" form="change-pfp-form" id="update-post" class="save" data-user-name="{{ profile.username }}">Update</button>
+                </div>
+                </div>
+                <div class="usermodal-body">
+                <div class="edit-text-div">
+                    {% csrf_token %}
+                    <div class="edit-text">
+                        <div class="edit-icon-wrapper">
+                            {% if user.pfp != None and user.pfp != "" %}
+                                <img class="edit-pfp-icon" style="border: 1px solid black; border-radius: 50%;" src="{% get_media_prefix %}{{ user.pfp }}">
+                            {% else %}
+                                <img class="edit-pfp-icon" style="border: 1px solid black; border-radius: 50%;" src="{% get_media_prefix %}images/default_pfp.png">
+                            {% endif %}
+                        </div>
+                        <div id="post-editor" autocomplete="off" autofocus="autofocus" class="edit-input" name="name" placeholder="{{ profile.name }}" contenteditable></div>
+                    </div>
+                </div>
+                </div>
+            </div>
+{% endblock %}

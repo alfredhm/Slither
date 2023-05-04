@@ -1,0 +1,73 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{% block title %}Slither{% endblock %}</title>
+        <link rel="icon" type="image/x-icon" href="{% get_media_prefix %}images/snake.png">
+        <link href="{% static 'network/styles.css' %}" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body id="layout">
+        <nav id="links">
+            <ul class="links-options">
+                <li>
+                    <a class="navbar-brand" href="{% url 'index' %}"><img id="icon" src="{% get_media_prefix %}images/snake.png"></a>
+                </li>
+                {% if user.is_authenticated %}
+                    <li class="hover" id="block">
+                        {% if user.pfp != None and user.pfp != "" %}
+                            <a href="{% url 'users' user.username %}" ><img id="subicon" class="pfp icn" style="border: 1px solid black; border-radius: 50%;" src="{% get_media_prefix %}{{ user.pfp }}"></a>
+                        {% else %}
+                            <a href="{% url 'users' user.username %}" ><img id="subicon" class="pfp icn" style="border: 1px solid black; border-radius: 50%;" src="{% get_media_prefix %}images/default_pfp.png"></a>
+                        {% endif %}
+                        <a id="user-link" class="link" href="{% url 'users' user.username %}">Profile</a>
+                    </li>
+                {% endif %}
+                    <li class="hover" id="block">
+                        <a href="{% url 'index' %}"><img id="subicon" class="large-icon" src="{% get_media_prefix %}images/post.png"></a>
+                        <a class="link" href="{% url 'index' %}">All Posts</a>
+                    </li>
+                {% if user.is_authenticated %}
+                    <li class="hover" id="block">
+                        <a href="{% url 'following' %}" ><img id="subicon" class="large-icon" src="{% get_media_prefix %}images/following.png"></a>
+                        <a id="following" class="link" href="{% url 'following' %}">Following</a>
+                    </li>
+                    <li class="hover" id="block">
+                        <a href="{% url 'logout' %}"><img id="subicon" class="log-out" src="{% get_media_prefix %}images/logout.png">
+                        <a class="link" href="{% url 'logout' %}">Log Out</a>
+                    </li>
+                {% else %}
+                <a href="{% url 'login' %}">
+                    <li class="hover" id="block">
+                        <img id="subicon" class="large-icon" src="{% get_media_prefix %}images/log-in.png">
+                        <a class="link" href="{% url 'login' %}">Log In</a>
+                    </li>
+                </a>
+                    <li class="hover" id="block">
+                        <a href="{% url 'register' %}"><img id="subicon" class="register" src="{% get_media_prefix %}images/register.png"></a>
+                        <a class="link" href="{% url 'register' %}">Register</a>
+                    </li>
+                {% endif %}
+              </ul>
+          </nav>
+
+        <div id="posts">
+            {% block body %}
+            {% endblock %}
+        </div>
+
+        <div id="other">
+        </div>
+
+    </body>
+
+    {% block script %}
+        <script src="{% static 'network/index.js' %}"></script>
+    {% endblock %}
+</html>

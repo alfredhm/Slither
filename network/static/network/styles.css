@@ -145,6 +145,7 @@ a:hover {
 .pfp {
   height: 40px;
   width: 40px;
+  object-fit: cover;
 }
 
 #profile {
@@ -348,6 +349,7 @@ a:hover {
   width: 100px;
   border-radius: 50%;
   border: 1px solid black;
+  object-fit: cover;
 }
 
 .follower-subdiv {

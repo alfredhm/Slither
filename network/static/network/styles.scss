@@ -967,12 +967,6 @@ html, body {
         width: 70px;
         height: 70px;
     }
-
-    #guest-follow-button, #followed-button, #follow-button {
-        width: 60px;
-        height: 30px;
-        font-size: 9px;
-    }
     .bio-text {
         font-size: 13px;
     }
@@ -1006,6 +1000,12 @@ html, body {
  }
 
  @media (max-width: 465px) {
+    #guest-follow-button, #follow-button {
+        width: 60px;
+        height: 30px;
+        font-size: 12px;
+    }
+
     .image-text {
         padding: 8px;
     }
@@ -1014,16 +1014,10 @@ html, body {
         padding-right: 25%;
     }
 
-    #guest-follow-button, #follow-button {
-        width: 40px;
-        height: 20px;
-        font-size: 9px;
-    }
-
     #followed-button {
-        width: 50px;
-        height: 20px;
-        font-size: 8px;
+        width: 60px;
+        height: 30px;
+        font-size: 10px;
     }
 
     .profile-header {
@@ -1145,7 +1139,7 @@ html, body {
     }
  }
 
- @media (max-width: 280px) {
+ @media (max-width: 300px) {
     #icon {
         height: 25px;
         width: 25px;
@@ -1157,8 +1151,8 @@ html, body {
     }
 
     .pfp, #subicon, #heart {
-        height: 18px!important;
-        width: 18px!important;
+        height: 25px!important;
+        width: 25px!important;
     }
 
     #dots {

@@ -377,6 +377,8 @@ a:hover {
     width: 100px;
     border-radius: 50%;
     border: 1px solid black;
+
+    // Prevents streching
     object-fit: cover;
 }
 

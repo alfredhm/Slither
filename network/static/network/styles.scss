@@ -1121,25 +1121,6 @@ html, body {
  }
 
  @media (max-width: 300px) {
-    .usermodal-title {
-        padding-right: 15%;
-    }
-
-    #posts .settings-change-pfp {
-        width: 40%;
-    }
-
-    .profile-and-follower-info-div {
-        gap: 5%;
-    }
-
-    .large-pfp {
-        height: 50px!important;
-        width: 50px!important;
-    }
- }
-
- @media (max-width: 300px) {
     #icon {
         height: 25px;
         width: 25px;
@@ -1162,5 +1143,22 @@ html, body {
 
     .dropdown-menu {
         width: 50px;
+    }
+
+    .usermodal-title {
+        padding-right: 15%;
+    }
+
+    #posts .settings-change-pfp {
+        width: 40%;
+    }
+
+    .profile-and-follower-info-div {
+        gap: 5%;
+    }
+
+    .large-pfp {
+        height: 50px!important;
+        width: 50px!important;
     }
  }

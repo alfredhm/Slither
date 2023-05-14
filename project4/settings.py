@@ -25,7 +25,7 @@ SECRET_KEY = '13kl@xtukpwe&xj2xoysxe9_6=tf@f8ewxer5n&ifnd46+6$%8'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['alfredhm.pythonanywhere.com']
+ALLOWED_HOSTS = ['alfredhm.pythonanywhere.com','127.0.0.1']
 
 
 # Application definition
@@ -122,6 +122,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_ROOT = os.path.join(BASE_DIR, '/network/static/network/')
+MEDIA_ROOT = os.path.join(BASE_DIR, '/media/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

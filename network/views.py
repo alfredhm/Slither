@@ -7,7 +7,6 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
-from django.utils import timezone
 
 from .models import *
 from .forms import *
@@ -317,8 +316,11 @@ def edit_post(request, postid):
         return JsonResponse([post.serialize()], safe=False)
     elif request.method == "PUT":
         data = json.loads(request.body)
-        new_body = str(data.get("new_body")).strip()
-        if new_body != "" and new_body != post.body:
+        new_body = str(data.get("new_body"))
+        
+        # Handle extra lines/whitespace
+        new_body = "\n".join([line.rstrip() for line in new_body.splitlines() if line.strip()])
+        if new_body.strip() != "" and new_body != post.body:
             post.body = new_body
             post.edited = True
             post.save()

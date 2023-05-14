@@ -16,7 +16,7 @@ a {
 
 a:hover {
   color: black;
-  text-decoration: underline !important;
+  text-decoration: underline;
 }
 
 .links-options {
@@ -42,6 +42,9 @@ a:hover {
 
 #user-link {
   max-height: 60px;
+}
+#user-link :hover {
+  text-decoration: none;
 }
 
 .follow-icon-text, .dropdown-icon-text {
@@ -205,7 +208,7 @@ a:hover {
 
 .likesdiv {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 3px;
 }
 
@@ -453,6 +456,9 @@ html, body {
 }
 .image-text .hiss-text #poster {
   font-weight: 500;
+}
+.image-text .hiss-text #poster:hover {
+  text-decoration: underline;
 }
 .image-text .hiss-text p {
   margin: 0 !important;
@@ -984,7 +990,7 @@ html, body {
     height: 13px !important;
     width: 13px !important;
   }
-  .pfp, #subicon, #heart {
+  .pfp, #subicon {
     height: 25px !important;
     width: 25px !important;
   }

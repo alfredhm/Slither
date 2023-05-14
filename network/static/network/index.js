@@ -2,9 +2,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.addEventListener('resize', checkMobile);
 
-    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
-
     const followed = document.querySelector('#followed-button');
 
     const follow = document.querySelectorAll('#follow.dropdown-menu');
@@ -20,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const close = document.querySelector(".close");
     const closeArrow = document.querySelector(".close-arrow");
     const save = document.querySelector(".save");
-    const pfp = document.querySelector(".old-pfp");
 
     if (settings) {
         const name = document.querySelector("#name");
@@ -177,11 +173,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     fetch(`/edit/${itemDiv.dataset.number}`, {
                         method: 'PUT',
                         body: JSON.stringify({
-                            new_body: editor.innerHTML
+                            new_body: editor.textContent
                         })
                     })
                     modal.style.display = "none";
-                    bodyDiv.innerHTML = editor.innerHTML;
+                    if (editor.textContent != "") {
+                        text = editor.textContent;
+                        text.replace(/^\s*[\r\n]/gm, " ")
+                        bodyDiv.innerHTML = text;
+                    }
                 }
 
 
